@@ -1,0 +1,41 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Context.puml
+'Container(containerAlias, "Label", "Technology", "Optional Description")
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+
+System(cookiessytem, "Cookie Store")
+
+System_Boundary(c3, "Client subdomain") {
+Person(clientalias, "Client")
+}
+
+System_Boundary(c1, "Cookie Inventory subdomain") {
+'System(inventorysystem, "Inventory")
+Container(inventoryContainer, "inventory", "inventories", "Which cookies are in store, also describes which types of cookies are in the system")
+
+'System(Cookies, "Cookies")
+Container(cookieContainer, "cookie", "cookies in inventory", "All the contents and information about cookies in the database")
+}
+
+System_Boundary(c2, "Cart subdomain") {
+'System(Cart, "Cart")
+Container(cartContainer, "cart", "items", "Details about the cart with the total price displayed")
+
+'System(Item, "Item")
+Container(cartItemContainer, "Cart Item", "items", "Contains all of the information about specific objects in our cart")
+}
+
+
+Rel(cookiessytem, clientalias, "Create Post")
+Rel(inventoryContainer, cookieContainer, "the inventory passes if the cookie is in stock")
+Rel(cartItemContainer, cartContainer, "Cart items determine the total price of the cart")
+Rel(cookieContainer, cartItemContainer, "The cookie is passed as a cart item in the Cart subdomain")
+Rel(clientalias, cartContainer, "The client decide what to add to their cart from the cart items")
+Rel(clientalias, cartItemContainer, "The client decide what to add to their cart from the cart items")
+
+
+
+@enduml

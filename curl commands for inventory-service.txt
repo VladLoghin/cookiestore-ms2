@@ -1,0 +1,68 @@
+Get all inventories and vehicles
+
+curl -v http://localhost:8080/api/v1/inventories | jq
+
+Get a  inventory by Id
+
+curl -v http://localhost:8080/api/v1/inventories/3fe5c169-c1ef-42ea-9e5e-870f30ba9dd0 | jq
+
+
+Delete an inventory and all its contents
+
+curl -v -X DELETE http://localhost:8080/api/v1/inventories/3fe5c169-c1ef-42ea-9e5e-870f30ba9dd0 | jq
+
+
+Show that a vehicle that was in that inventory is gone. Should get a 404 Not Found, if you coded it that way.
+
+curl -v http://localhost:8080/api/v1/inventories/3fe5c169-c1ef-42ea-9e5e-870f30ba9dd0/vehicles/WBAYA8C50FG933061 | jq
+
+
+Post a new inventory
+
+curl -v -X POST http://localhost:8080/api/v1/inventories -H "Content-Type: application/json" -d '{"type": "small-vehicles"}'  | jq
+
+
+update an inventory
+
+curl -v -X PUT http://localhost:8080/api/v1/inventories/3fe5c169-c1ef-42ea-9e5e-870f30ba9dd0 -H "Content-Type: application/json" -d '{"type": "big-vehicles"}'  | jq
+
+
+
+Get all vehicles in an inventory
+
+curl -v http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles -jq
+
+Get one vehicle in an inventory
+
+curl -v http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles/JN8AS5MTXDW375966 | jq
+
+Update one vehicle in an inventory
+
+curl -v -X PUT http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles/JN8AS5MTXDW375966  -H "Content-Type: application/json" -d '{"inventoryId": "d846a5a7-2e1c-4c79-809c-4f3f471e826d", "status": "SALE_PENDING", "usageType": "NEW",  "year": 2013, "manufacturer": "NISSAN MOTOR COMPANY, TD", "make": "NISSAN",      "model": "Rogue", "bodyClass": "Crossover Utility Vehicle (CUV)", "options": [{"name": "Wheels","description": "-inc: Style 1023, Increased Top Speed Limiter, Tires: 75/40R22 Performance Non Run-Flat","cost": 1794.17 }, {"name": "Seat Trim", "description": "Castanea Chestnut, Olive Leaf Tanned Perforated Leather Upholstery", "cost": 4038.33 },{          "name": "Executive Package", "description": "-inc: Active Cruise Control w/Stop & Go, Glass & Wood Controls, Soft-Close Automatic Doors, Traffic Jam Assistant, Active Lane", "cost": 9638.32}], "msrp": 73536.64, "cost": 64330.65 }'  | jq
+
+Post a new vehicle in an inventory
+curl -v -X POST http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles  -H "Content-Type: application/json" -d '{"vehicleId": "JH4DA3462JS027249", "inventoryId": "d846a5a7-2e1c-4c79-809c-4f3f471e826d", "status": "AVAILABLE", "usageType": "NEW",  "year": 2023, "manufacturer": "NISSAN MOTOR COMPANY, TD", "make": "NISSAN",      "model": "Rogue", "bodyClass": "Crossover Utility Vehicle (CUV)", "options": [{"name": "Seat Trim", "description": "Castanea Chestnut, Olive Leaf Tanned Perforated Leather Upholstery", "cost": 4038.33 },{"name": "Executive Package", "description": "-inc: Active Cruise Control w/Stop & Go, Glass & Wood Controls, Soft-Close Automatic Doors, Traffic Jam Assistant, Active Lane", "cost": 9638.32}], "msrp": 73536.64, "cost": 64330.65 }'  | jq
+
+Post it a second time to get a 422 unprocessable entity status for duplicate vin exception. 
+
+Post with invalid inventory id 
+
+Post a new vehicle in an inventory - get a 404 - Not found error with unknown inventoryId exception
+
+curl -v -X POST http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826G/vehicles  -H "Content-Type: application/json" -d '{"vehicleId": "5N1AL0MM4DC301508", "inventoryId": "d846a5a7-2e1c-4c79-809c-4f3f471e826d", "status": "AVAILABLE", "usageType": "NEW",  "year": 2023, "manufacturer": "NISSAN MOTOR COMPANY, TD", "make": "NISSAN",      "model": "Rogue", "bodyClass": "Crossover Utility Vehicle (CUV)", "options": [{"name": "Seat Trim", "description": "Castanea Chestnut, Olive Leaf Tanned Perforated Leather Upholstery", "cost": 4038.33 },{"name": "Executive Package", "description": "-inc: Active Cruise Control w/Stop & Go, Glass & Wood Controls, Soft-Close Automatic Doors, Traffic Jam Assistant, Active Lane", "cost": 9638.32}], "msrp": 73536.64, "cost": 64330.65 }'  | jq
+
+Post with an invalid vin shorter than 17 characters - 422 Unprocessable Entity
+
+curl -v -X POST http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles  -H "Content-Type: application/json" -d '{"vehicleId": "5N1AL0MM4DC30150", "inventoryId": "d846a5a7-2e1c-4c79-809c-4f3f471e826d", "status": "AVAILABLE", "usageType": "NEW",  "year": 2023, "manufacturer": "NISSAN MOTOR COMPANY, TD", "make": "NISSAN",      "model": "Rogue", "bodyClass": "Crossover Utility Vehicle (CUV)", "options": [{"name": "Seat Trim", "description": "Castanea Chestnut, Olive Leaf Tanned Perforated Leather Upholstery", "cost": 4038.33 },{"name": "Executive Package", "description": "-inc: Active Cruise Control w/Stop & Go, Glass & Wood Controls, Soft-Close Automatic Doors, Traffic Jam Assistant, Active Lane", "cost": 9638.32}], "msrp": 73536.64, "cost": 64330.65 }'  | jq
+
+Post with an invalid vin longer than 17 characters - 422 Unprocessable Entity
+
+curl -v -X POST http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles  -H "Content-Type: application/json" -d '{"vehicleId": "5N1AL0MM4DC3015088", "inventoryId": "d846a5a7-2e1c-4c79-809c-4f3f471e826d", "status": "AVAILABLE", "usageType": "NEW",  "year": 2023, "manufacturer": "NISSAN MOTOR COMPANY, TD", "make": "NISSAN",      "model": "Rogue", "bodyClass": "Crossover Utility Vehicle (CUV)", "options": [{"name": "Seat Trim", "description": "Castanea Chestnut, Olive Leaf Tanned Perforated Leather Upholstery", "cost": 4038.33 },{"name": "Executive Package", "description": "-inc: Active Cruise Control w/Stop & Go, Glass & Wood Controls, Soft-Close Automatic Doors, Traffic Jam Assistant, Active Lane", "cost": 9638.32}], "msrp": 73536.64, "cost": 64330.65 }'  | jq
+
+Delete a vehicle
+curl -v -X DELETE http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles/JN8AS5MTXDW375966 | jq
+
+Get it again to show that it's gone
+curl -v http://localhost:8080/api/v1/inventories/d846a5a7-2e1c-4c79-809c-4f3f471e826d/vehicles/JN8AS5MTXDW375966 | jq
+
+
