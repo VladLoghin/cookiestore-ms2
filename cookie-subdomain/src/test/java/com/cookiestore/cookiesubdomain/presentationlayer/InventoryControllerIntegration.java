@@ -30,9 +30,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 public class InventoryControllerIntegration {
 
     private final String BASE_URI_INVENTORIES = "/api/v1/cookieInventories";
-    private final String VALID_COOKIE_INVENTORY = "7111";
+    private final String VALID_COOKIE_INVENTORY_ID = "7111";
 
-    private final String VALID_INVENTORY_TYPE="sugar";
+    private final String VALID_INVENTORY_TYPE = "sugar";
 
     @Autowired
     CookieRepository cookieRepository;
@@ -44,6 +44,7 @@ public class InventoryControllerIntegration {
     WebTestClient webTestClient;
      */
 
+    @Autowired
     WebTestClient webTestClient;
 
     @Sql({"/data-mysql.sql"})
@@ -53,6 +54,7 @@ public class InventoryControllerIntegration {
         Integer expectedNumInventories = 2;
 
         //act
+
         webTestClient.get()
                 .uri(BASE_URI_INVENTORIES)
                 .accept(MediaType.APPLICATION_JSON)
@@ -63,5 +65,18 @@ public class InventoryControllerIntegration {
                 .jsonPath("$.length()").isEqualTo(expectedNumInventories);
     }
 
+    @Sql({"/data-mysql.sql"})
+    @Test
+    public void whenGetInventoriesWithValidIdExists_thenReturnInventories(){
+        webTestClient.get()
+                .uri(BASE_URI_INVENTORIES + "/" + VALID_COOKIE_INVENTORY_ID)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isOk()
+                .expectHeader()
+                .contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.invId").isEqualTo(VALID_COOKIE_INVENTORY_ID);
+    }
 
 }
+
